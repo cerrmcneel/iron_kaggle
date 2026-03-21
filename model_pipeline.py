@@ -11,7 +11,7 @@ def run_model_process(sales_df):
     print("Preparing data...")
     
     # 1. Feature Engineering
-    df = sales_df.copy()
+    df = sales_df_encoded.copy()
     df['date'] = pd.to_datetime(df['date'])
     df['year'] = df['date'].dt.year
     df['month'] = df['date'].dt.month
