@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
-from xgboost import XGBRegressor # From your Ensemble lesson!
+from xgboost import XGBRegressor 
 
 def run_model_process(sales_df):
     print("Preparing data...")
@@ -28,7 +28,7 @@ def run_model_process(sales_df):
     cat_features = ['state_holiday', 'store_ID'] 
     num_features = [col for col in X.columns if col not in cat_features]
     
-    # 4. The Preprocessor (This replaces manual pd.get_dummies)
+    # 4. The Preprocessor
     preprocessor = ColumnTransformer(
         transformers=[
             ('num', 'passthrough', num_features),
@@ -41,7 +41,7 @@ def run_model_process(sales_df):
         ('model', XGBRegressor(n_estimators=100, max_depth=6, learning_rate=0.1, n_jobs=-1))
     ])
     
-    # 6. Train/Test Split (To prove to the instructors your R2 score)
+    # 6. Train/Test Split 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
     print("Training XGBoost...")
@@ -50,7 +50,7 @@ def run_model_process(sales_df):
     score = pipeline.score(X_test, y_test)
     print(f"✅ Model R2 Score: {score:.4f}")
     
-    # 7. Save the model (Deliverable!)
+    # 7. Save the model
     with open('model.pkl', 'wb') as f:
         pickle.dump(pipeline, f)
     print("✅ model.pkl saved.")
