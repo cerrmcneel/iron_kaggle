@@ -19,7 +19,7 @@ error.log
 .idea/
 .DS_Store
 .ipynb_checkpoints/
-.pem
+*.pem
 *.csv
 model.pkl
 *.log
