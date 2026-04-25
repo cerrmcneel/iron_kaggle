@@ -66,8 +66,8 @@ def generate_predictions():
     real_preds = np.expm1(log_preds)
     
     # 5. Format for submission
-    # Identify the ID column (could be 'id', 'Unnamed: 0', or just index)
-    id_col = 'Unnamed: 0' if 'Unnamed: 0' in df_val.columns else ('id' if 'id' in df_val.columns else None)
+    # Identify the ID column (the competition file uses 'index')
+    id_col = 'index' if 'index' in df_val.columns else ('Unnamed: 0' if 'Unnamed: 0' in df_val.columns else ('id' if 'id' in df_val.columns else None))
     
     output = pd.DataFrame({
         'index': df_val[id_col] if id_col else df_val.index,

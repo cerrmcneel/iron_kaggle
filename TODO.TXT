@@ -1,0 +1,51 @@
+I'll walk you through how the `sample_weight` parameter works within a Scikit-Learn `Pipeline`, specifically for prioritizing "peak sales" accuracy.
+
+### 1. The Concept: Defining "Importance"
+Standard machine learning models treat every row in your dataset as equally important. In your case (sales prediction), a mistake on a day with $10,000 in sales carries the same "weight" in the loss function as a mistake on a day with $100 in sales.
+
+By using **`sample_weight`**, you tell the model: *"Pay 5x more attention to the high-sales days because they matter more for our business."*
+
+### 2. How to Create the Weights
+You wouldn't just pick a number; you would create a list or array of weights the same length as your training data. A common strategy for prioritizing peaks is to make the weight proportional to the sales amount:
+
+*   **Normal days**: Weight = 1.0 (baseline)
+*   **Peak days**: Weight = 2.0 (or more, depending on how much you want to prioritize them)
+
+You could calculate this using a simple rule, for example:
+```python
+# Conceptual logic: higher sales = higher weight
+weights = np.where(y_train > y_train.quantile(0.95), 5, 1)
+```
+*(This tells the model that the top 5% of sales days are 5 times more important than other days.)*
+
+### 3. The `model__` Prefix in Pipelines
+Since you are using a `Pipeline` (defined on line 83 of your [model_pipeline.py](cci:7://file:///c:/ironhack/labs/iron_kaggle/model_pipeline.py:0:0-0:0)), you can't just pass `sample_weight` directly to `pipeline.fit()`. 
+
+Scikit-Learn pipelines use a **double-underscore (`__`) notation** to route parameters to specific steps:
+*   In your pipeline, you named the final step `'model'` (line 85).
+*   Therefore, you pass `model__sample_weight` to the `fit` method.
+*   The pipeline receives the weights, ignores them during the preprocessing steps (like `ColumnTransformer`), and then hands them off to the `XGBRegressor` right before training begins.
+
+### 4. How the Model Uses the Weights
+During training, XGBoost calculates a "loss" (the error) for each prediction. 
+*   **Without weights**: Total Loss = sum(all errors)
+*   **With weights**: Total Loss = sum(error * weight)
+
+If a high-sales day has a weight of 10, a small error on that day will suddenly look like a massive mistake to the model. The model will then adjust its internal "trees" to specifically reduce the error on those high-weight rows, even if it slightly increases the error on low-weight rows.
+
+### 5. Why this is better than "Oversampling"
+Oversampling (duplicating rows) literally makes your dataset larger and can cause the model to memorize specific rows (overfitting). 
+
+**`sample_weight`** is cleaner because:
+1.  **It doesn't change your data**: You keep the original distribution.
+2.  **No data duplication**: You don't waste memory or compute time on redundant rows.
+3.  **Mathematically precise**: It directly modifies the optimization goal (the loss function) rather than trying to trick the model with data distribution hacks.
+
+---
+
+### Summary Walkthrough (Conceptual)
+If you were to use it, the process would look like this:
+1.  **Analyze**: Identify your "peak" days (e.g., sales > €15,000).
+2.  **Generate**: Create a `weights` array where those days have a value like `2.0` and others have `1.0`.
+3.  **Inject**: Run `pipeline.fit(X_train, y_train, model__sample_weight=weights)`.
+4.  **Evaluate**: Check if your errors on "Peak" days specifically have decreased compared to your current model.

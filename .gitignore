@@ -1,1 +1,29 @@
+# Python Bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Logs
+*.log
+error.log
+
+# IDEs and OS junk
+.vscode/
+.idea/
+.DS_Store
 .ipynb_checkpoints/
+.pem
+*.csv
+model.pkl
+*.log
+# Data (Optional: usually ignored if very large)
+# sales.csv
+
+# NOTE: Markdown files (.md) are NOT ignored so they stay tracked!

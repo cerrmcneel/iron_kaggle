@@ -1,0 +1,28 @@
+# Data files
+*.csv
+*.ipynb
+*.log
+error*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Git
+.git
+.gitignore
+
+# Environment
+.env
+venv/
+.venv/
+
+# Project specifics
+MENTOR_CONTEXT.md
+PROGRESS_SUMMARY.md
+TODO.TXT
+implementation_plan.md
+task.md
+walkthrough.md
